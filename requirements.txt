@@ -1,0 +1,4 @@
+requests
+requests-cache
+fastapi
+uvicorn
