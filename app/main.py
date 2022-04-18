@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 import requests_cache
 import requests
 from pydantic import BaseModel
-from typing import List
+from typing import List, Union
 
 app = FastAPI(
     title="Champion Prices API",
@@ -15,7 +15,7 @@ requests_cache.install_cache(expire_after=360)
 class Skin(BaseModel):
     name: str
     id: int
-    cost: int
+    cost: Union[int,str]
     sale: int
 
 class Price(BaseModel):
@@ -35,6 +35,8 @@ def champion_by_id(id):
         [champ] = [champ['alias'] for champ in cdragon if champ['id'] == int(id)]
     except ValueError:
         raise HTTPException(status_code=404, detail="Invalid Champion ID")
+    if champ == "FiddleSticks":
+        champ = "Fiddlesticks"
     return champion_by_key(champ)
 
 @app.get("/champion/key/{key}", response_model=Champion)
